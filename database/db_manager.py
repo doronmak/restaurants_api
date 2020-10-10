@@ -25,11 +25,11 @@ class DB:
     def create_restaurant_table(self):
         Base.metadata.create_all(self.engine)
 
-    def add_new_restaurant(self, rest_name, rest_type, rest_phone, rest_location):
-        new_rest = Restaurants(name=rest_name,
-                               type=rest_type,
-                               phone=rest_phone,
-                               location=rest_location)
+    def add_new_restaurant(self, restaurant_name, restaurant_type, restaurant_phone, restaurant_location):
+        new_rest = Restaurants(name=restaurant_name,
+                               type=restaurant_type,
+                               phone=restaurant_phone,
+                               location=restaurant_location)
         self.session.add(new_rest)
         self.session.commit()
 
@@ -50,3 +50,11 @@ class DB:
         for restaurant in restaurants:
             rest_list.append(rest_to_dict(restaurant))
         return rest_list
+
+    def update_restaurant(self, rest_id, updated_restaurant):
+        restaurant = self.session.query(Restaurants).filter(Restaurants.id == rest_id).first()
+        restaurant.name = updated_restaurant["Name"]
+        restaurant.type = updated_restaurant["Type"]
+        restaurant.phone = updated_restaurant["Phone"]
+        restaurant.location = updated_restaurant["Location"]
+        self.session.commit()
