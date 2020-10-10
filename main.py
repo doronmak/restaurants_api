@@ -1,6 +1,7 @@
 import uvicorn
 import config
-from app import app
+from app import app, first_app_init
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=config.host, port=config.port, log_level=config.log_level)
+    first_app_init()
+    uvicorn.run(app, host=config.api_host, port=config.port, log_level=config.log_level)
