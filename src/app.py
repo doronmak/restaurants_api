@@ -5,7 +5,7 @@ from settings import config, resources
 from models.Restaurant import Restaurant
 from fastapi.responses import JSONResponse
 
-app = FastAPI()
+app = FastAPI(title="Restaurant API")
 
 restaurants_db = RestaurantsDB(protocol=config.DB_PROTOCOL, user=config.DB_USERNAME, password=config.DB_PASSWORD,
                                host=config.DB_HOST,
