@@ -8,13 +8,11 @@ class CSVAnalyzer:
         self.csv_as_dict = self.csv_to_dict()
 
     def read_file(self):
-        file = open(self.csv_file, 'r')
-        with file:
+        with open(self.csv_file, 'r') as file:
             list_of_rows = []
             reader = csv.reader(file)
             for row in reader:
                 list_of_rows.append(row)
-        file.close()
         list_of_rows.pop(0)
         for row in list_of_rows:
             location = row.pop(-1)

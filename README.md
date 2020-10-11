@@ -1,5 +1,5 @@
 # restaurants_api
-this API used for manage and edit restaurants by postgress sql
+this API used for manage and edit restaurants by postgres sql
 ## Required
 python , pip
 
@@ -7,12 +7,13 @@ python , pip
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requirements.
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements/ENV.txt 
+example: prod.txt
 ```
 ## Running the Web Server
  Run the main.py file via bash
 ```bash
-python main.py
+python src/main.py
 ```
 ### docs
 after you run my web server you can go to the docs by adding docs to the address
