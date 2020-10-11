@@ -1,6 +1,6 @@
 import uvicorn
-from src.settings import config
-from src.app import app, first_app_init
+from settings import config
+from app import app, first_app_init
 
 if __name__ == "__main__":
     first_app_init()

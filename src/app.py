@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from src.database.db_manager import RestaurantsDB
-from src.csv_analyzer import CsvFileAdapter
-from src.settings import config, resources
-from src.models.Restaurant import Restaurant
+from database.db_manager import RestaurantsDB
+from csv_analyzer import CsvFileAdapter
+from settings import config, resources
+from models.Restaurant import Restaurant
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
