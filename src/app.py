@@ -1,17 +1,17 @@
 from fastapi import FastAPI
-from src.database.db_manager import DB
-from src.csv_analyzer import CSVAnalyzer
+from src.database.db_manager import RestaurantsDB
+from src.csv_analyzer import CsvFileAdapter
 from src.settings import config, resources
 from src.models.Restaurant import Restaurant
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-restaurants_db = DB(db_type=config.DB_PROTOCOL, db_user=config.DB_USERNAME, db_password=config.DB_PASSWORD,
-                    db_host=config.DB_HOST,
-                    db_name=config.DB_NAME)
+restaurants_db = RestaurantsDB(protocol=config.DB_PROTOCOL, user=config.DB_USERNAME, password=config.DB_PASSWORD,
+                               host=config.DB_HOST,
+                               name=config.DB_NAME, port=config.DB_PORT)
 
-csv_reader = CSVAnalyzer(config.RESTAURANTS_FILE)
+csv_reader = CsvFileAdapter(config.RESTAURANTS_FILE)
 
 
 def first_app_init():
@@ -31,40 +31,55 @@ def index():
 
 @app.get(f"{resources.RESTAURANTS}")
 def get_all_restaurant():
-    restaurants_list = []
-    for rest in restaurants_db.get_all_restaurants():
-        restaurants_list.append(restaurant_to_dict(rest))
-    return JSONResponse(content=restaurants_list, status_code=200)
+    try:
+        restaurants_list = []
+        for rest in restaurants_db.get_all_restaurants():
+            restaurants_list.append(restaurant_to_dict(rest))
+        return JSONResponse(content=restaurants_list, status_code=200)
+    except Exception as error:
+        return JSONResponse(content=error.__str__(), status_code=500)
 
 
 @app.post(f"{resources.RESTAURANTS}")
 async def post_restaurant(restaurant: Restaurant):
-    new_rest = restaurants_db.add_new_restaurant(restaurant_name=restaurant.name, restaurant_type=restaurant.type,
-                                                 restaurant_phone=restaurant.phone,
-                                                 restaurant_location=restaurant.location)
-    data = restaurant_to_dict(new_rest)
-    return JSONResponse(content=data, status_code=201)
+    try:
+        new_rest = restaurants_db.add_new_restaurant(restaurant_name=restaurant.name, restaurant_type=restaurant.type,
+                                                     restaurant_phone=restaurant.phone,
+                                                     restaurant_location=restaurant.location)
+        data = restaurant_to_dict(new_rest)
+        return JSONResponse(content=data, status_code=201)
+    except Exception as error:
+        return JSONResponse(content=error.__str__(), status_code=500)
 
 
 @app.get(f"{resources.RESTAURANTS}" + '/{restaurant_id}')
 def get_restaurant_by_id(restaurant_id):
-    rest = restaurants_db.get_restaurant_by_id(restaurant_id)
-    data = restaurant_to_dict(rest)
-    return JSONResponse(content=data, status_code=200)
+    try:
+        rest = restaurants_db.get_restaurant_by_id(restaurant_id)
+        data = restaurant_to_dict(rest)
+        return JSONResponse(content=data, status_code=200)
+    except Exception as error:
+        return JSONResponse(content=error.__str__(), status_code=500)
 
 
 @app.put(f"{resources.RESTAURANTS}" + '/{restaurant_id}')
 async def put_restaurant_by_id(restaurant_id, update_restaurants: Restaurant):
-    update_rest = restaurants_db.update_restaurant(restaurant_id, update_restaurants)
-    data = restaurant_to_dict(update_rest)
-    return JSONResponse(content=data, status_code=200)
+    try:
+        update_rest = restaurants_db.update_restaurant(restaurant_id, update_restaurants)
+        data = restaurant_to_dict(update_rest)
+        return JSONResponse(content=data, status_code=200)
+    except Exception as error:
+        return JSONResponse(content=error.__str__(), status_code=500)
 
 
 @app.delete(f"{resources.RESTAURANTS}" + '/{restaurant_id}')
 def delete_restaurant_by_id(restaurant_id):
-    deleted_rest = restaurants_db.delete_restaurant_by_id(restaurant_id)
-    data = restaurant_to_dict(deleted_rest)
-    return JSONResponse(content=data, status_code=200)
+    try:
+        deleted_rest = restaurants_db.delete_restaurant_by_id(restaurant_id)
+        data = restaurant_to_dict(deleted_rest)
+        return JSONResponse(content=data, status_code=200)
+    except Exception as error:
+        return JSONResponse(content=error.__str__(), status_code=500)
 
 
 def restaurant_to_dict(restaurant):
