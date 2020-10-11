@@ -1,7 +1,7 @@
 import csv
 
 
-class CSVAnalyzer:
+class CsvFileAdapter(object):
     def __init__(self, file):
         self.csv_file = file
         self.file_after_read = self.read_file()

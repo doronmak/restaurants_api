@@ -3,13 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from src.database.models import Base, Restaurant
 
 
-class DB:
-    def __init__(self, db_type, db_user, db_password, db_host, db_name):
-        self.db_conn_string = "{}://{}:{}@{}:5432/{}".format(db_type,
-                                                             db_user,
-                                                             db_password,
-                                                             db_host,
-                                                             db_name)
+class RestaurantsDB(object):
+    def __init__(self, protocol, user, password, host, name, port):
+        self.db_conn_string = f"{protocol}://{user}:{password}@{host}:{port}/{name}"
         self.engine = create_engine(self.db_conn_string, echo=False)
         self.SessionManager = sessionmaker(self.engine)
         self.session = self.SessionManager()
@@ -18,31 +14,43 @@ class DB:
         Base.metadata.create_all(self.engine)
 
     def add_new_restaurant(self, restaurant_name, restaurant_type, restaurant_phone, restaurant_location):
-        new_rest = Restaurant(name=restaurant_name,
-                              type=restaurant_type,
-                              phone=restaurant_phone,
-                              location=restaurant_location)
-        self.session.add(new_rest)
-        self.session.commit()
-        return new_rest
+        try:
+            new_rest = Restaurant(name=restaurant_name,
+                                  type=restaurant_type,
+                                  phone=restaurant_phone,
+                                  location=restaurant_location)
+            self.session.add(new_rest)
+            self.session.commit()
+            return new_rest
+        except Exception as error:
+            raise error
 
     def get_restaurant_by_id(self, rest_id):
-        return self.session.query(Restaurant).filter(Restaurant.id == rest_id).first()
+        restaurant = self.session.query(Restaurant).filter(Restaurant.id == rest_id).first()
+        if restaurant is not None:
+            return restaurant
+        else:
+            raise Exception('Restaurant was not found')
 
     def delete_restaurant_by_id(self, rest_id):
-        rest_to_delete = self.get_restaurant_by_id(rest_id)
-        self.session.delete(rest_to_delete)
-        print(rest_to_delete.id)
-        self.session.commit()
-        return rest_to_delete
+        try:
+            rest_to_delete = self.get_restaurant_by_id(rest_id)
+            self.session.delete(rest_to_delete)
+            self.session.commit()
+            return rest_to_delete
+        except Exception as error:
+            raise error
 
     def get_all_restaurants(self):
-        restaurants = self.session.query(Restaurant.id, Restaurant.name, Restaurant.type, Restaurant.phone,
-                                         Restaurant.location)
-        rest_list = []
-        for restaurant in restaurants:
-            rest_list.append(restaurant)
-        return rest_list
+        try:
+            restaurants = self.session.query(Restaurant.id, Restaurant.name, Restaurant.type, Restaurant.phone,
+                                             Restaurant.location)
+            rest_list = []
+            for restaurant in restaurants:
+                rest_list.append(restaurant)
+            return rest_list
+        except Exception as error:
+            raise error
 
     def update_restaurant(self, rest_id, updated_restaurant):
         restaurant = self.get_restaurant_by_id(rest_id)
