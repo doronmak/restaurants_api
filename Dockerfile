@@ -8,6 +8,8 @@ COPY requirements/prod.txt .
 
 # install dependencies
 RUN pip install -r prod.txt
+EXPOSE 80
+
 
 # copy the content of the local src directory to the working directory
 COPY src .
